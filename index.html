@@ -597,7 +597,7 @@ function openDetail(idx) {
 
     <div class="stat-grid" id="detail-stat-grid">
       <div class="stat"><div class="stat-label">Harga BBM</div><div class="stat-val" id="stat-harga">Rp ${parseInt(v.bbmPrice).toLocaleString("id-ID")}/L</div></div>
-      <div class="stat"><div class="stat-label">Biaya full tank</div><div class="stat-val" style="color:var(--primary)" id="stat-fulltank">${fmt(v.tank * parseInt(v.bbmPrice))}</div></div>
+      <div class="stat"><div class="stat-label">Anti tumpah (95%)</div><div class="stat-val" style="color:var(--green)" id="stat-fulltank">${fmt(v.tank * 0.95 * parseInt(v.bbmPrice))}</div></div>
     </div>
 
     <button class="btn-primary" onclick="goToCalc(${idx})" style="margin-bottom:12px;">⛽ Hitung bensin sekarang</button>
@@ -844,8 +844,8 @@ function selectGaugeBar(level) {
           <div class="gmr-stat-val">${harusBeli.toFixed(1)} L</div>
         </div>
         <div class="gmr-stat">
-          <div class="gmr-stat-lbl">Biaya full tank</div>
-          <div class="gmr-stat-val">${fmt(biayaFull)}</div>
+          <div class="gmr-stat-lbl">Sudah tempuh</div>
+          <div class="gmr-stat-val">${avg ? '≈ ' + Math.round((v.tank - sisaLiter) * avg) + ' km' : '—'}</div>
         </div>
         <div class="gmr-stat">
           <div class="gmr-stat-lbl">Anti tumpah (95%)</div>
@@ -881,21 +881,13 @@ function hitungDariGauge(sisaLiter) {
   // Hitung MURNI tanpa buffer — mode indikator tidak diubah sama sekali
   const harusBeli       = Math.max(0, v.tank - sisaLiter);
   const beliAntiTumpah  = Math.max(0, v.tank * 0.95 - sisaLiter);
-  const hargaFull       = harusBeli * harga;
   const hargaAntiTumpah = beliAntiTumpah * harga;
-  const selisih         = hargaFull - hargaAntiTumpah;
   const sisaKm          = Math.round(sisaLiter * avg);
 
   const area = document.getElementById("result-area");
   area.style.display = "block";
   area.innerHTML = `
     <div style="font-size:14px; font-weight:600; color:var(--text-secondary); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">Hasil perhitungan</div>
-
-    <div class="result-block blue">
-      <div class="result-tag blue">🔵 Full tank — ${v.tank} liter penuh</div>
-      <div class="result-amount blue">${fmt(hargaFull)}</div>
-      <div class="result-note" style="color:var(--primary);">Beli ≈ <strong>${harusBeli.toFixed(2)} liter</strong> · sisa tangki ${sisaLiter.toFixed(2)} L</div>
-    </div>
 
     <div class="result-block green">
       <div class="result-tag green">🟢 Anti tumpah — ${(v.tank * 0.95).toFixed(2)} liter (95%)</div>
@@ -909,9 +901,7 @@ function hitungDariGauge(sisaLiter) {
       <div class="result-note" style="color:var(--amber);">Estimasi bisa tempuh ≈ <strong>${sisaKm} km</strong> lagi</div>
     </div>
 
-    <div class="tip">
-      <p>💡 Pilih opsi <strong>anti tumpah</strong> agar tidak meluap saat mengisi. Hemat <strong>${fmt(selisih)}</strong> dari full tank dan tangki tetap hampir penuh.</p>
-    </div>
+
   `;
   area.scrollIntoView({ behavior: "smooth", block: "start" });
 }
