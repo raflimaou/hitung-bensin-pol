@@ -1,5 +1,13 @@
-const CACHE = "hitungbensin-v5";
-const ASSETS = ["/", "/index.html", "/manifest.json", "/harga.json", "/icons/icon-192.png", "/icons/icon-512.png"];
+const CACHE = "hitungbensin-v6";
+const BASE = "/hitung-bensin-pol";
+const ASSETS = [
+  BASE + "/",
+  BASE + "/index.html",
+  BASE + "/manifest.json",
+  BASE + "/harga.json",
+  BASE + "/icons/icon-192.png",
+  BASE + "/icons/icon-512.png"
+];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
@@ -22,7 +30,7 @@ self.addEventListener("fetch", e => {
           caches.open(CACHE).then(c => c.put(e.request, clone));
           return res;
         })
-        .catch(() => caches.match("/index.html"))
+        .catch(() => caches.match(BASE + "/index.html"))
     );
     return;
   }
