@@ -1,26 +1,22 @@
 {
   "name": "HitungBensin",
   "short_name": "HitungBensin",
-  "description": "Kalkulator bensin dengan harga BBM Pertamina terkini untuk Banten",
-  "start_url": "/",
+  "description": "Kalkulator BBM & harga Banten",
+  "start_url": "/hitung-bensin-pol/",
+  "scope": "/hitung-bensin-pol/",
   "display": "standalone",
   "background_color": "#185FA5",
   "theme_color": "#185FA5",
-  "orientation": "portrait",
   "icons": [
     {
       "src": "icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
       "src": "icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
-  ],
-  "categories": ["utilities", "productivity"],
-  "lang": "id"
+  ]
 }
