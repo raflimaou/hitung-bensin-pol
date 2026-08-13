@@ -254,6 +254,19 @@
     /* Divider */
     .divider { height: 0.5px; background: var(--border); margin: 16px 0; }
 
+    /* Install button */
+    .install-btn {
+      display: none;
+      width: 100%; padding: 13px;
+      background: #22c55e; color: #fff;
+      border: none; border-radius: var(--radius);
+      font-size: 14px; font-weight: 600;
+      cursor: pointer; margin-bottom: 12px;
+      align-items: center; justify-content: center; gap: 8px;
+    }
+    .install-btn.visible { display: flex; }
+    .install-btn:active { opacity: 0.85; }
+
     /* Mode tabs */
     .mode-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
     .mode-tab {
@@ -324,6 +337,9 @@
       </div>
     </div>
     <div class="scroll-content">
+      <button class="install-btn" id="install-btn" onclick="installApp()">
+        📲 Install App HitungBensin
+      </button>
       <div class="price-updated" id="price-updated" style="margin-bottom:8px; text-align:right; font-size:10px; color:var(--text-tertiary);">Memuat...</div>
 
       <div class="price-strip">
@@ -938,6 +954,29 @@ function renderBBMSelect() {
     `<option value="${price}" data-name="${name}">${name} – Rp ${price.toLocaleString("id-ID")}/L</option>`
   ).join("");
   if (prev) sel.value = prev;
+}
+
+// Install PWA
+let _deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _deferredPrompt = e;
+  const btn = document.getElementById('install-btn');
+  if (btn) btn.classList.add('visible');
+});
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('install-btn');
+  if (btn) btn.classList.remove('visible');
+  _deferredPrompt = null;
+  showToast('App berhasil diinstall ✓');
+});
+function installApp() {
+  if (!_deferredPrompt) {
+    showToast('Buka di Chrome lalu tap menu → Install App');
+    return;
+  }
+  _deferredPrompt.prompt();
+  _deferredPrompt.userChoice.then(() => { _deferredPrompt = null; });
 }
 
 // Init
