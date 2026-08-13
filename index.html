@@ -692,19 +692,38 @@ function hitungBensin() {
 
   const area = document.getElementById("result-area");
   area.style.display = "block";
+  // Harga anti tumpah, dibulatkan ke bawah Rp 1.000
+  const beliOdo = Math.max(0, v.tank * 0.95 - sisaTangki);
+  const hargaAntiTumpahOdo = Math.floor(beliOdo * harga / 1000) * 1000;
+
+  // Cek apakah sisa mendekati kondisi kritis (< 1L)
+  const isKritis = sisaTangki < 1.0;
+
   area.innerHTML = `
     <div style="font-size:14px; font-weight:600; color:var(--text-secondary); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">Hasil perhitungan</div>
 
+    ${isKritis ? `
+    <div class="result-block" style="background:var(--amber-light);border:0.5px solid #FAC775;border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;">
+      <div class="result-tag" style="color:var(--amber);font-size:12px;font-weight:600;margin-bottom:4px;">⚠️ Estimasi sisa mendekati kritis</div>
+      <div style="font-size:24px;font-weight:700;color:var(--amber);">${sisaTangki.toFixed(2)} liter</div>
+      <div style="font-size:13px;margin-top:4px;color:var(--amber);">Segera isi bensin!</div>
+    </div>` : ''}
+
     <div class="result-block green">
-      <div class="result-tag green">🟢 Anti tumpah — ${(v.tank * 0.95).toFixed(2)} liter (95%)</div>
-      <div class="result-amount green">${fmt(hargaAntiTumpah)}</div>
-      <div class="result-note" style="color:var(--green);">Beli ≈ <strong>${beliAntiTumpah.toFixed(2)} liter</strong> · aman tidak meluap</div>
+      <div class="result-tag green">🟢 Estimasi anti tumpah (95%)</div>
+      <div class="result-amount green">${fmt(hargaAntiTumpahOdo)}</div>
+      <div class="result-note" style="color:var(--green);">Beli ≈ <strong>${beliOdo.toFixed(2)} liter</strong>${isKritis ? ' · <strong>tambah Rp 5.000–8.000 jika banyak macet</strong>' : ' · mulai dari angka ini'}</div>
     </div>
 
+    ${!isKritis ? `
     <div class="result-block amber">
-      <div class="result-tag amber">📍 Sisa bensin estimasi sekarang</div>
+      <div class="result-tag amber">📍 Estimasi sisa bensin sekarang</div>
       <div class="result-amount amber">${sisaTangki.toFixed(2)} liter</div>
-      <div class="result-note" style="color:var(--amber);">Estimasi bisa tempuh ≈ <strong>${sisaKm} km</strong> lagi</div>
+      <div class="result-note" style="color:var(--amber);">Bisa tempuh ≈ <strong>${sisaKm} km</strong> lagi · sudah tempuh ≈ <strong>${Math.round((v.tank - sisaTangki) * avg)} km</strong></div>
+    </div>` : ''}
+
+    <div class="tip">
+      <p>💡 Hasil odometer adalah estimasi. Untuk rekomendasi lebih akurat gunakan <strong>mode indikator batang</strong>.</p>
     </div>
   `;
 
@@ -790,12 +809,16 @@ function selectGaugeBar(level) {
   // Batang 1 = zona 0.5*lpb ~ lpb → estimasi tengah = 0.75*lpb (~0.69L)
   // Batang N (2-5) = zona (N-1)*lpb ~ N*lpb → estimasi tengah = (N-0.5)*lpb
   // Batang 6 = zona (5*lpb ~ 5.5L) → estimasi tengah = 5.5*lpb = ~5.04L (cap ke TANK)
-  const lpb = v.tank / GAUGE_BARS;
+  // Kalibrasi dari data nyata user:
+  // Tangki 5.5L, sisa saat kedip = 0.5L, rata2 42km/L
+  // Total km sampai kedip = (5.5-0.5)*42 = 210km
+  // Liter per batang = 5.0/6 = 0.8333L
+  // Sisa batang N = 0.5 + N*0.8333
+  const sisaPerBatang = (v.tank - 0.5) / GAUGE_BARS; // ~0.8333L
   let sisaLiter;
-  if (level === 0)      sisaLiter = 0.25 * lpb;
-  else if (level === 1) sisaLiter = v.tank - (226/47); // dikalibrasi: anti tumpah = Rp 75.574 (BP 92 Rp16.670)
-  else if (level === 2) sisaLiter = v.tank * 0.95 - (65000 / 16130); // dikalibrasi: anti tumpah = Rp 65.000 (BP 92 Rp16.130)
-  else                  sisaLiter = (level - 0.5) * lpb;
+  if (level === 0)           sisaLiter = 0.5;
+  else if (level === GAUGE_BARS) sisaLiter = v.tank;
+  else                       sisaLiter = 0.5 + level * sisaPerBatang;
   sisaLiter = Math.min(sisaLiter, v.tank);
 
   const harusBeli    = Math.max(0, v.tank - sisaLiter);
