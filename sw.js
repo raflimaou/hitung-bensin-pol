@@ -1,4 +1,4 @@
-const CACHE = "hitungbensin-v6";
+const CACHE = "hitungbensin-v7";
 const BASE = "/hitung-bensin-pol";
 const ASSETS = [
   BASE + "/",
