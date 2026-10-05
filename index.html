@@ -390,11 +390,14 @@
         <label>Jenis BBM yang digunakan</label>
         <select id="add-bbm">
           <option value="10000">Pertalite – Rp 10.000/L</option>
-          <option value="12300">Pertamax – Rp 12.300/L</option>
-          <option value="12900">Pertamax Green 95 – Rp 12.900/L</option>
-          <option value="19900">Pertamax Turbo – Rp 19.900/L</option>
-          <option value="26000">Dexlite – Rp 26.000/L</option>
-          <option value="27900">Pertamina Dex – Rp 27.900/L</option>
+          <option value="15950">Pertamax – Rp 15.950/L</option>
+          <option value="16600">Pertamax Green 95 – Rp 16.600/L</option>
+          <option value="19600">Pertamax Turbo – Rp 19.600/L</option>
+          <option value="23700">Dexlite – Rp 23.700/L</option>
+          <option value="25200">Pertamina Dex – Rp 25.200/L</option>
+          <option value="16130">BP 92 – Rp 16.130/L</option>
+          <option value="19330">BP Ultimate – Rp 19.330/L</option>
+          <option value="16130">Vivo Revvo 92 – Rp 16.130/L</option>
         </select>
       </div>
       <button class="btn-primary" onclick="addVehicle()">Simpan kendaraan</button>
@@ -479,18 +482,18 @@ const DEFAULT_PRICES = {
   "Pertalite": 10000,
   "Pertamax": 15950,
   "Pertamax Green 95": 16600,
-  "Pertamax Turbo": 18300,
-  "Dexlite": 19700,
-  "Pertamina Dex": 21150,
+  "Pertamax Turbo": 19600,
+  "Dexlite": 23700,
+  "Pertamina Dex": 25200,
   "Vivo Revvo 92": 16130,
-  "Vivo Diesel Primus": 21910,
+  "Vivo Diesel Primus": 25420,
   "BP 92": 16130,
-  "BP Ultimate": 16760,
-  "BP Ultimate Diesel": 21910
+  "BP Ultimate": 19330,
+  "BP Ultimate Diesel": 25420
 };
 
 let bbmPrices = {...DEFAULT_PRICES};
-let bbmUpdated = "Mei 2026";
+let bbmUpdated = "1 Oktober 2026";
 
 async function loadHarga() {
   try {
