@@ -267,20 +267,31 @@
     .install-btn.visible { display: flex; }
     .install-btn:active { opacity: 0.85; }
 
-    /* Mode tabs */
-    .mode-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-    .mode-tab {
-      padding: 12px 8px; border-radius: var(--radius); border: 1.5px solid var(--border-med);
-      background: var(--surface); cursor: pointer; text-align: center; transition: all 0.15s;
-    }
-    .mode-tab.active { border-color: var(--primary); background: var(--primary-light); }
-    .mode-tab-icon { font-size: 24px; margin-bottom: 4px; }
-    .mode-tab-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
-    .mode-tab.active .mode-tab-label { color: var(--primary); }
-    .mode-tab-sub { font-size: 10px; color: var(--text-tertiary); margin-top: 2px; }
-    .mode-tab.active .mode-tab-sub { color: var(--primary); opacity: 0.7; }
-    .mode-panel { display: none; }
-    .mode-panel.active { display: block; }
+    /* Section labels */
+    .calc-section-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.4px; margin: 16px 0 8px; }
+    .calc-section-opt { font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 12px; color: var(--text-tertiary); }
+
+    /* Gauge preview card */
+    .gauge-preview-card { border-radius: var(--radius); padding: 14px 16px; margin-top: 12px; }
+    .gauge-preview-card.ok  { background: var(--green-light); border: 0.5px solid #C0DD97; }
+    .gauge-preview-card.warn { background: var(--amber-light); border: 0.5px solid #FAC775; }
+    .gpc-top { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+    .gpc-title { font-size: 12px; font-weight: 600; }
+    .gpc-title.ok { color: var(--green); }
+    .gpc-title.warn { color: var(--amber); }
+    .gpc-val { font-size: 26px; font-weight: 700; }
+    .gpc-val.ok { color: var(--green); }
+    .gpc-val.warn { color: var(--amber); }
+    .gpc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .gpc-cell { background: var(--surface); border-radius: 8px; padding: 9px 11px; }
+    .gpc-lbl { font-size: 10px; color: var(--text-tertiary); margin-bottom: 2px; }
+    .gpc-num { font-size: 14px; font-weight: 600; color: var(--text); }
+
+    /* Accuracy bar */
+    .calc-accuracy-bar { margin-top: 10px; }
+    .accuracy-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+    .accuracy-track { height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .accuracy-fill { height: 100%; border-radius: 4px; background: var(--primary); transition: width 0.3s; }
 
     /* Fuel gauge */
     .gauge-wrap { background: var(--surface); border-radius: var(--radius); border: 0.5px solid var(--border); padding: 16px; }
@@ -298,29 +309,6 @@
     .gbar.blink { background: #f59e0b; border-color: #d97706; animation: blink-bar 0.85s ease-in-out infinite; }
     .gbar-lbl { font-size: 10px; color: var(--text-tertiary); }
 
-    /* Gauge result */
-    .gauge-mini-result { border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 12px; }
-    .gauge-mini-result.warn { background: var(--amber-light); border: 0.5px solid #FAC775; }
-    .gauge-mini-result.ok { background: var(--green-light); border: 0.5px solid #C0DD97; }
-    .gmr-top { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
-    .gmr-title { font-size: 11px; font-weight: 600; }
-    .gmr-title.warn { color: var(--amber); }
-    .gmr-title.ok { color: var(--green); }
-    .gmr-val { font-size: 22px; font-weight: 700; }
-    .gmr-val.warn { color: var(--amber); }
-    .gmr-val.ok { color: var(--green); }
-    .gmr-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-    .gmr-stat { background: var(--surface); border-radius: 6px; padding: 8px 10px; }
-    .gmr-stat-lbl { font-size: 10px; color: var(--text-tertiary); }
-    .gmr-stat-val { font-size: 13px; font-weight: 600; color: var(--text); margin-top: 2px; }
-
-    /* Shared avg input inside gauge */
-    .gauge-avg-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-    .gauge-avg-row label { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
-    .gauge-avg-row input { flex: 1; padding: 9px 12px; font-size: 14px; }
-
-    .btn-hitung-full { background: var(--primary); color: #fff; border: none; border-radius: var(--radius-sm); padding: 12px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 10px; }
-    .btn-hitung-full:active { opacity: 0.85; }
   </style>
 </head>
 <body>
@@ -428,47 +416,33 @@
         </div>
       </div>
 
-      <!-- MODE TABS -->
-      <div class="mode-tabs">
-        <div class="mode-tab active" id="tab-gauge" onclick="switchMode('gauge')">
-          <div class="mode-tab-icon">⛽</div>
-          <div class="mode-tab-label">Dari indikator</div>
-          <div class="mode-tab-sub">Tap batang bensin</div>
-        </div>
-        <div class="mode-tab" id="tab-odo" onclick="switchMode('odo')">
-          <div class="mode-tab-icon">🛣️</div>
-          <div class="mode-tab-label">Dari odometer</div>
-          <div class="mode-tab-sub">Isi jarak tempuh</div>
-        </div>
+      <!-- PANEL TERPADU -->
+      <div class="field" style="margin-bottom:4px;">
+        <label>Rata-rata km/L motormu</label>
+        <input type="number" id="calc-avg" placeholder="Contoh: 43" step="0.5" min="1" inputmode="decimal" oninput="onInputChanged()">
       </div>
 
-      <!-- PANEL: GAUGE -->
-      <div class="mode-panel active" id="panel-gauge">
-        <div class="gauge-wrap">
-          <div class="gauge-avg-row">
-            <label>Rata-rata km/L</label>
-            <input type="number" id="gauge-avg" placeholder="cth: 42" step="0.5" min="1" inputmode="decimal" oninput="refreshGauge()">
-          </div>
-          <div class="gauge-hint" id="gauge-hint">Tap batang tertinggi yang masih menyala di motormu</div>
-          <div class="gauge-tank-row" id="gauge-bars">
-            <div class="gauge-pump-icon">⛽</div>
-          </div>
-          <div id="gauge-result"></div>
+      <div class="calc-section-label">Indikator bensin <span class="calc-section-opt">— tap posisi sekarang</span></div>
+      <div class="gauge-wrap" style="margin-bottom:0;">
+        <div class="gauge-hint" id="gauge-hint">Tap batang tertinggi yang masih menyala di motormu</div>
+        <div class="gauge-tank-row" id="gauge-bars">
+          <div class="gauge-pump-icon">⛽</div>
         </div>
+        <div id="gauge-preview" style="display:none;"></div>
       </div>
 
-      <!-- PANEL: ODOMETER -->
-      <div class="mode-panel" id="panel-odo">
-        <div class="field">
-          <label>Rata-rata pemakaian BBM (km/liter)</label>
-          <input type="number" id="calc-avg" placeholder="Contoh: 42" step="0.5" min="1" inputmode="decimal">
-        </div>
-        <div class="field">
-          <label>Jarak tempuh sejak isi bensin terakhir (km)</label>
-          <input type="number" id="calc-km" placeholder="Contoh: 190" step="1" min="0" inputmode="numeric">
-        </div>
-        <button class="btn-primary" onclick="hitungBensin()">Hitung sekarang →</button>
+      <div class="calc-section-label" style="margin-top:16px;">Odometer <span class="calc-section-opt">— opsional, untuk lebih akurat</span></div>
+      <div class="field" style="margin-bottom:4px;">
+        <label>Jarak tempuh sejak isi bensin terakhir (km)</label>
+        <input type="number" id="calc-km" placeholder="Contoh: 145" step="1" min="0" inputmode="numeric" oninput="onInputChanged()">
       </div>
+
+      <div class="calc-accuracy-bar" id="calc-accuracy-bar" style="display:none;">
+        <div class="accuracy-label" id="accuracy-label">Akurasi: —</div>
+        <div class="accuracy-track"><div class="accuracy-fill" id="accuracy-fill"></div></div>
+      </div>
+
+      <button class="btn-primary" style="margin-top:16px;" onclick="hitungGabungan()">Hitung sekarang →</button>
 
       <div id="result-area" style="display:none; margin-top:20px;"></div>
     </div>
@@ -651,7 +625,6 @@ function goToCalc(idx) {
   document.getElementById("calc-km").value = "";
   document.getElementById("result-area").style.display = "none";
   showScreen("screen-calc");
-  switchMode("gauge");
   initGauge(v.tank);
 }
 
@@ -683,79 +656,120 @@ function confirmDelete(idx) {
   }
 }
 
-function hitungBensin() {
+// ── HITUNG GABUNGAN (Indikator + Odometer) ───────────────────
+function hitungGabungan() {
   const v = vehicles[selectedIdx];
   const avg = parseFloat(document.getElementById("calc-avg").value);
-  const km = parseFloat(document.getElementById("calc-km").value);
+  const km  = parseFloat(document.getElementById("calc-km").value);
   const harga = parseInt(v.bbmPrice);
-
-  if (!avg || avg <= 0) { showToast("Masukkan rata-rata km/liter"); return; }
-  if (isNaN(km) || km < 0) { showToast("Masukkan jarak tempuh yang valid"); return; }
-
-  const sudahPakai = km / avg;
-  const sisaTangki = Math.max(0, v.tank - sudahPakai);
-  const harusBeli = Math.max(0, v.tank - sisaTangki);
-  const hargaFullRaw = harusBeli * harga;
-
-  const targetAntiTumpah = v.tank * 0.95;
-  const beliAntiTumpah = Math.max(0, targetAntiTumpah - sisaTangki);
-  const hargaAntiTumpahRaw = beliAntiTumpah * harga;
-
-  // Bulatkan ke bawah ke kelipatan Rp 1.000 (tanpa buffer, agar tidak tumpah)
   const floor1k = n => Math.floor(n / 1000) * 1000;
-  const hargaFull = floor1k(hargaFullRaw);
-  const hargaAntiTumpah = floor1k(hargaAntiTumpahRaw);
-  const selisih = hargaFull - hargaAntiTumpah;
 
-  const sisaKm = Math.round(sisaTangki * avg);
+  if (!avg || avg <= 0) { showToast("Isi rata-rata km/L dulu ya"); return; }
+
+  const hasGauge = _gaugeSelectedBar !== null;
+  const hasOdo   = !isNaN(km) && km > 0;
+
+  if (!hasGauge && !hasOdo) {
+    showToast("Tap batang indikator atau isi jarak tempuh");
+    return;
+  }
+
+  // ── Hitung sisa dari masing-masing sumber ──
+  let sisaGauge = null, sisaOdo = null;
+
+  if (hasGauge) {
+    const level = _gaugeSelectedBar;
+    const sisaPerBatang = (v.tank - 0.5) / GAUGE_BARS;
+    if (level === 0)                sisaGauge = 0.5;
+    else if (level === GAUGE_BARS)  sisaGauge = v.tank;
+    else                            sisaGauge = 0.5 + level * sisaPerBatang;
+    sisaGauge = Math.min(sisaGauge, v.tank);
+  }
+
+  if (hasOdo) {
+    sisaOdo = Math.max(0, v.tank - km / avg);
+  }
+
+  // ── Gabungkan: rata-rata tertimbang jika keduanya ada ──
+  let sisaFinal, metode, akurasi;
+
+  if (hasGauge && hasOdo) {
+    // Keduanya tersedia → rata-rata, gauge sedikit lebih dipercaya (60:40)
+    sisaFinal = sisaGauge * 0.6 + sisaOdo * 0.4;
+    metode = "Indikator + Odometer";
+    akurasi = 92;
+    // Jika selisih > 1L, saling bertentangan → tunjukkan peringatan
+    const selisih = Math.abs(sisaGauge - sisaOdo);
+    if (selisih > 1.2) {
+      akurasi = 70;
+    }
+  } else if (hasGauge) {
+    sisaFinal = sisaGauge;
+    metode = "Dari indikator";
+    akurasi = 78;
+  } else {
+    sisaFinal = sisaOdo;
+    metode = "Dari odometer";
+    akurasi = 65;
+  }
+
+  sisaFinal = Math.max(0, Math.min(sisaFinal, v.tank));
+
+  const beliAntiTumpah   = Math.max(0, v.tank * 0.95 - sisaFinal);
+  const hargaAntiTumpah  = floor1k(beliAntiTumpah * harga);
+  const sisaKm           = Math.round(sisaFinal * avg);
+  const isKritis         = sisaFinal < 1.0;
+
+  // Info per-sumber untuk ditampilkan
+  const gaugeInfo = hasGauge ? `≈ ${sisaGauge.toFixed(2)} L` : null;
+  const odoInfo   = hasOdo   ? `≈ ${sisaOdo.toFixed(2)} L`   : null;
+  const selisihInfo = (hasGauge && hasOdo) ? Math.abs(sisaGauge - sisaOdo) : null;
 
   const area = document.getElementById("result-area");
   area.style.display = "block";
-  // Harga anti tumpah, dibulatkan ke bawah Rp 1.000
-  const beliOdo = Math.max(0, v.tank * 0.95 - sisaTangki);
-  const hargaAntiTumpahOdo = Math.floor(beliOdo * harga / 1000) * 1000;
-
-  // Cek apakah sisa mendekati kondisi kritis (< 1L)
-  const isKritis = sisaTangki < 1.0;
-
   area.innerHTML = `
-    <div style="font-size:14px; font-weight:600; color:var(--text-secondary); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">Hasil perhitungan</div>
+    <div style="font-size:14px;font-weight:600;color:var(--text-secondary);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px;">Hasil perhitungan</div>
 
     ${isKritis ? `
     <div class="result-block" style="background:var(--amber-light);border:0.5px solid #FAC775;border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;">
-      <div class="result-tag" style="color:var(--amber);font-size:12px;font-weight:600;margin-bottom:4px;">⚠️ Estimasi sisa mendekati kritis</div>
-      <div style="font-size:24px;font-weight:700;color:var(--amber);">${sisaTangki.toFixed(2)} liter</div>
+      <div class="result-tag" style="color:var(--amber);font-size:12px;font-weight:600;margin-bottom:4px;">🚨 Sisa bensin kritis!</div>
+      <div style="font-size:24px;font-weight:700;color:var(--amber);">${sisaFinal.toFixed(2)} liter</div>
       <div style="font-size:13px;margin-top:4px;color:var(--amber);">Segera isi bensin!</div>
     </div>` : ''}
 
     <div class="result-block green">
-      <div class="result-tag green">🟢 Estimasi anti tumpah (95%)</div>
-      <div class="result-amount green">${fmt(hargaAntiTumpahOdo)}</div>
-      <div class="result-note" style="color:var(--green);">Beli ≈ <strong>${beliOdo.toFixed(2)} liter</strong>${isKritis ? ' · <strong>tambah Rp 5.000–8.000 jika banyak macet</strong>' : ' · mulai dari angka ini'}</div>
+      <div class="result-tag green">🟢 Anti tumpah 95% — ${(v.tank * 0.95).toFixed(2)} liter</div>
+      <div class="result-amount green">${fmt(hargaAntiTumpah)}</div>
+      <div class="result-note" style="color:var(--green);">Beli ≈ <strong>${beliAntiTumpah.toFixed(2)} liter</strong> · aman tidak meluap</div>
     </div>
 
-    ${!isKritis ? `
     <div class="result-block amber">
       <div class="result-tag amber">📍 Estimasi sisa bensin sekarang</div>
-      <div class="result-amount amber">${sisaTangki.toFixed(2)} liter</div>
-      <div class="result-note" style="color:var(--amber);">Bisa tempuh ≈ <strong>${sisaKm} km</strong> lagi · sudah tempuh ≈ <strong>${Math.round((v.tank - sisaTangki) * avg)} km</strong></div>
-    </div>` : ''}
+      <div class="result-amount amber">${sisaFinal.toFixed(2)} liter</div>
+      <div class="result-note" style="color:var(--amber);">Bisa tempuh ≈ <strong>${sisaKm} km</strong> lagi</div>
+    </div>
 
-    <div class="tip">
-      <p>💡 Hasil odometer adalah estimasi. Untuk rekomendasi lebih akurat gunakan <strong>mode indikator batang</strong>.</p>
+    <div style="background:var(--primary-light);border-radius:var(--radius-sm);padding:12px 14px;margin-top:8px;">
+      <div style="font-size:12px;font-weight:600;color:var(--primary);margin-bottom:6px;">📊 Detail kalkulasi · ${metode}</div>
+      ${gaugeInfo ? `<div style="font-size:12px;color:var(--text-secondary);margin-bottom:2px;">Dari indikator batang: <strong>${gaugeInfo}</strong></div>` : ''}
+      ${odoInfo ? `<div style="font-size:12px;color:var(--text-secondary);margin-bottom:2px;">Dari odometer (${km} km ÷ ${avg} km/L): <strong>${odoInfo}</strong></div>` : ''}
+      ${selisihInfo !== null && selisihInfo > 1.2 ? `<div style="font-size:12px;color:var(--amber);margin-top:4px;">⚠️ Selisih ${selisihInfo.toFixed(1)}L — cek kembali odometer atau km/L kamu</div>` : ''}
+      <div style="margin-top:8px;">
+        <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:3px;">Estimasi akurasi</div>
+        <div style="height:6px;background:var(--border);border-radius:4px;overflow:hidden;">
+          <div style="height:100%;width:${akurasi}%;background:var(--primary);border-radius:4px;"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px;">${akurasi}% · ${hasGauge && hasOdo ? 'data lengkap ✓' : hasGauge ? 'tambah odometer untuk lebih akurat' : 'tambah indikator batang untuk lebih akurat'}</div>
+      </div>
     </div>
   `;
-
   area.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-// ── MODE TABS ────────────────────────────────────────────────
-function switchMode(mode) {
-  ["gauge","odo"].forEach(m => {
-    document.getElementById("tab-" + m).classList.toggle("active", m === mode);
-    document.getElementById("panel-" + m).classList.toggle("active", m === mode);
-  });
+function onInputChanged() {
   document.getElementById("result-area").style.display = "none";
+  // Refresh preview gauge jika batang sudah dipilih
+  if (_gaugeSelectedBar !== null) selectGaugeBar(_gaugeSelectedBar);
 }
 
 // ── FUEL GAUGE ──────────────────────────────────────────────
@@ -807,146 +821,85 @@ function initGauge(tankLiter) {
     container.appendChild(col);
   }
 
-  document.getElementById("gauge-result").innerHTML = "";
   document.getElementById("gauge-hint").textContent = "Tap posisi indikator bensinmu sekarang";
 }
 
 function selectGaugeBar(level) {
-  // level 0 = kedip, level 1–6 = batang
   _gaugeSelectedBar = level;
   const v = vehicles[selectedIdx];
-  const harga = parseInt(v.bbmPrice);
-  const literPerBar = v.tank / GAUGE_BARS;
 
-  // Estimasi sisa:
-  // kedip (0) = ~0.3L (nyaris habis)
-  // batang 1  = ~0.5 * literPerBar
-  // batang N  = (N - 0.5) * literPerBar
-  // Perhitungan berbasis midpoint per zona batang:
-  // Tangki 5.5L dibagi 6 batang = ~0.917L/batang
-  // Kedip  = zona 0 ~ 0.5*lpb  → estimasi tengah = 0.25*lpb (~0.23L)
-  // Batang 1 = zona 0.5*lpb ~ lpb → estimasi tengah = 0.75*lpb (~0.69L)
-  // Batang N (2-5) = zona (N-1)*lpb ~ N*lpb → estimasi tengah = (N-0.5)*lpb
-  // Batang 6 = zona (5*lpb ~ 5.5L) → estimasi tengah = 5.5*lpb = ~5.04L (cap ke TANK)
-  // Kalibrasi dari data nyata user:
-  // Tangki 5.5L, sisa saat kedip = 0.5L, rata2 42km/L
-  // Total km sampai kedip = (5.5-0.5)*42 = 210km
-  // Liter per batang = 5.0/6 = 0.8333L
-  // Sisa batang N = 0.5 + N*0.8333
+  // Kalkulasi sisa (physics-based)
   const sisaPerBatang = (v.tank - 0.5) / GAUGE_BARS; // ~0.8333L
   let sisaLiter;
-  if (level === 0)           sisaLiter = 0.5;
-  else if (level === GAUGE_BARS) sisaLiter = v.tank;
-  else                       sisaLiter = 0.5 + level * sisaPerBatang;
+  if (level === 0)                sisaLiter = 0.5;
+  else if (level === GAUGE_BARS)  sisaLiter = v.tank;
+  else                            sisaLiter = 0.5 + level * sisaPerBatang;
   sisaLiter = Math.min(sisaLiter, v.tank);
 
-  const harusBeli    = Math.max(0, v.tank - sisaLiter);
-  const harusBeli95  = Math.max(0, v.tank * 0.95 - sisaLiter);
-  const biayaFull    = harusBeli * harga;
-  const biaya95      = harusBeli95 * harga;
-  const avg          = parseFloat(document.getElementById("gauge-avg").value) || null;
-  const sisaKm       = avg ? Math.round(sisaLiter * avg) : null;
-  const isLow        = level <= 1; // kedip atau batang 1
-
-  // Update bar visuals (0 = blink, 1–6 = normal)
+  // Update bar visuals
   for (let i = 0; i <= GAUGE_BARS; i++) {
     const bar = document.getElementById("gbar-" + i);
     if (!bar) continue;
     bar.className = "gbar";
     if (i === 0) {
-      // Batang kedip: aktif kalau level=0, redup kalau level>0
       if (level === 0) { bar.classList.add("blink"); bar.classList.add("selected-ring"); }
-      else if (level > 0) bar.classList.add("filled"); // semua batang aktif → kedip juga "terisi"
+      else bar.classList.add("filled");
     } else {
       if (i < level)        bar.classList.add("filled");
       else if (i === level) { bar.classList.add("filled"); bar.classList.add("selected-ring"); }
     }
   }
 
+  const isLow = level <= 1;
   document.getElementById("gauge-hint").textContent =
     level === 0
-      ? "Indikator kedip — bensin kritis!"
-      : `Batang ${level} dipilih — sisa bensin ≈ ${sisaLiter.toFixed(1)} liter`;
+      ? `⚠️ Kedip — sisa ≈ ${sisaLiter.toFixed(1)} L · bensin kritis!`
+      : `Batang ${level} dipilih · sisa ≈ ${sisaLiter.toFixed(1)} L${isLow ? " · hampir habis!" : ""}`;
 
-  const mood = isLow ? "warn" : "ok";
-  const resultEl = document.getElementById("gauge-result");
-  resultEl.innerHTML = `
-    <div class="gauge-mini-result ${mood}">
-      <div class="gmr-top">
-        <div class="gmr-title ${mood}">${level === 0 ? "🚨 Bensin kritis!" : isLow ? "⚠️ Hampir habis!" : "✅ Estimasi sisa"}</div>
-        <div class="gmr-val ${mood}">≈ ${sisaLiter.toFixed(1)} L</div>
+  // Render preview card di bawah gauge
+  const avg     = parseFloat(document.getElementById("calc-avg").value) || null;
+  const harga   = parseInt(v.bbmPrice);
+  const harusBeli95 = Math.max(0, v.tank * 0.95 - sisaLiter);
+  const biaya95 = Math.floor(harusBeli95 * harga / 1000) * 1000;
+  const sisaKm  = avg ? Math.round(sisaLiter * avg) : null;
+  const sudahKm = avg ? Math.round((v.tank - sisaLiter) * avg) : null;
+  const mood    = isLow ? "warn" : "ok";
+  const icon    = level === 0 ? "🚨" : isLow ? "⚠️" : "✅";
+  const titleTxt = level === 0 ? "Bensin kritis!" : isLow ? "Hampir habis!" : "Estimasi sisa";
+
+  const preview = document.getElementById("gauge-preview");
+  preview.style.display = "block";
+  preview.innerHTML = `
+    <div class="gauge-preview-card ${mood}">
+      <div class="gpc-top">
+        <div class="gpc-title ${mood}">${icon} ${titleTxt}</div>
+        <div class="gpc-val ${mood}">≈ ${sisaLiter.toFixed(1)} L</div>
       </div>
-      <div class="gmr-stats">
-        <div class="gmr-stat">
-          <div class="gmr-stat-lbl">Sisa jarak</div>
-          <div class="gmr-stat-val">${sisaKm !== null ? "≈ " + sisaKm + " km" : "— (isi rata-rata)"}</div>
+      <div class="gpc-grid">
+        <div class="gpc-cell">
+          <div class="gpc-lbl">Sisa jarak</div>
+          <div class="gpc-num">${sisaKm !== null ? "≈ " + sisaKm + " km" : "— (isi km/L)"}</div>
         </div>
-        <div class="gmr-stat">
-          <div class="gmr-stat-lbl">Perlu beli</div>
-          <div class="gmr-stat-val">${harusBeli.toFixed(1)} L</div>
+        <div class="gpc-cell">
+          <div class="gpc-lbl">Perlu beli</div>
+          <div class="gpc-num">${harusBeli95.toFixed(1)} L</div>
         </div>
-        <div class="gmr-stat">
-          <div class="gmr-stat-lbl">Sudah tempuh</div>
-          <div class="gmr-stat-val">${avg ? '≈ ' + Math.round((v.tank - sisaLiter) * avg) + ' km' : '—'}</div>
+        <div class="gpc-cell">
+          <div class="gpc-lbl">Sudah tempuh</div>
+          <div class="gpc-num">${sudahKm !== null ? "≈ " + sudahKm + " km" : "—"}</div>
         </div>
-        <div class="gmr-stat">
-          <div class="gmr-stat-lbl">Anti tumpah (95%)</div>
-          <div class="gmr-stat-val">${harusBeli95 > 0 ? fmt(biaya95) : "Sudah cukup"}</div>
+        <div class="gpc-cell">
+          <div class="gpc-lbl">Anti tumpah (95%)</div>
+          <div class="gpc-num" style="color:var(--${mood === 'ok' ? 'green' : 'amber'})">${harusBeli95 > 0 ? fmt(biaya95) : "Sudah cukup"}</div>
         </div>
       </div>
-      <button class="btn-hitung-full" onclick="hitungDariGauge(${sisaLiter})">
-        ${isLow ? "⚠️ Hitung detail sekarang →" : "Lihat perhitungan lengkap →"}
-      </button>
     </div>
   `;
+
+  // Reset result area jika sebelumnya sudah dihitung
+  document.getElementById("result-area").style.display = "none";
 }
 
-let _gaugeLastSisa = null;
-
-function refreshGauge() {
-  if (_gaugeSelectedBar === null) return;
-  selectGaugeBar(_gaugeSelectedBar);
-  if (_gaugeLastSisa !== null && document.getElementById('result-area').style.display !== 'none') {
-    hitungDariGauge();
-  }
-}
-
-function hitungDariGauge(sisaLiter) {
-  if (sisaLiter !== undefined) _gaugeLastSisa = sisaLiter;
-  else sisaLiter = _gaugeLastSisa;
-  if (sisaLiter === null) return;
-  const v = vehicles[selectedIdx];
-  const avg = parseFloat(document.getElementById("gauge-avg").value);
-  if (!avg) { showToast("Isi rata-rata km/liter dulu ya"); return; }
-  const harga = parseInt(v.bbmPrice);
-
-  // Hitung MURNI tanpa buffer — mode indikator tidak diubah sama sekali
-  const harusBeli       = Math.max(0, v.tank - sisaLiter);
-  const beliAntiTumpah  = Math.max(0, v.tank * 0.95 - sisaLiter);
-  const hargaAntiTumpah = beliAntiTumpah * harga;
-  const sisaKm          = Math.round(sisaLiter * avg);
-
-  const area = document.getElementById("result-area");
-  area.style.display = "block";
-  area.innerHTML = `
-    <div style="font-size:14px; font-weight:600; color:var(--text-secondary); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px;">Hasil perhitungan</div>
-
-    <div class="result-block green">
-      <div class="result-tag green">🟢 Anti tumpah — ${(v.tank * 0.95).toFixed(2)} liter (95%)</div>
-      <div class="result-amount green">${fmt(hargaAntiTumpah)}</div>
-      <div class="result-note" style="color:var(--green);">Beli ≈ <strong>${beliAntiTumpah.toFixed(2)} liter</strong> · aman tidak meluap</div>
-    </div>
-
-    <div class="result-block amber">
-      <div class="result-tag amber">📍 Sisa bensin estimasi sekarang</div>
-      <div class="result-amount amber">${sisaLiter.toFixed(2)} liter</div>
-      <div class="result-note" style="color:var(--amber);">Estimasi bisa tempuh ≈ <strong>${sisaKm} km</strong> lagi</div>
-    </div>
-
-
-  `;
-  area.scrollIntoView({ behavior: "smooth", block: "start" });
-}
 // ── END FUEL GAUGE ───────────────────────────────────────────
 
 function renderBBMSelect() {
